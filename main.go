@@ -209,10 +209,10 @@ func voting(kandidatList *tabKandidat) {
 func tabel(kandidatList *tabKandidat) {
 	var i int
 	fmt.Println("Tabel Kandidat")
+	fmt.Println("Nomor Urut | Nama | Visi | Misi | Jumlah Vote")
 	for i = 0; i < NMAX; i++ {
 		if kandidatList[i].nomorUrut != 0 {
-			fmt.Println("Nomor Urut | Nama | Visi | Misi | Jumlah Vote")
-			fmt.Printf("%d | %s | %s | %s | %d\n\n", kandidatList[i].nomorUrut, kandidatList[i].nama, kandidatList[i].visi, kandidatList[i].misi, kandidatList[i].vote)
+			fmt.Printf("%d | %s | %s | %s | %d\n", kandidatList[i].nomorUrut, kandidatList[i].nama, kandidatList[i].visi, kandidatList[i].misi, kandidatList[i].vote)
 		}
 	}
 }
