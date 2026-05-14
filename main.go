@@ -171,8 +171,29 @@ func hapus(kandidatList *tabKandidat) {
 	fmt.Println("Kandidat tidak ditemukan!")
 }
 
+func search(kandidatList *tabKandidat, nomorUrut int) int {
+	for i := 0; i < len(kandidatList); i++ {
+		if kandidatList[i].nomorUrut == nomorUrut {
+			kandidatList[i].vote++
+			return i
+		}
+	}
+	return -1
+}
+
 func voting(kandidatList *tabKandidat) {
+	var nomorUrut, index int
+
 	fmt.Println("Voting")
+	fmt.Print("Masukkan Nomor Urut Yang Ingin di Vote : ")
+	fmt.Scan(&nomorUrut)
+	index = search(kandidatList, nomorUrut)
+
+	if index != -1 {
+		fmt.Printf("Terima kasih telah memilih kandidat nomor urut %d!\n", nomorUrut)
+	} else {
+		fmt.Println("Kandidat tidak ditemukan!")
+	}
 }
 
 func tabel(kandidatList *tabKandidat) {
