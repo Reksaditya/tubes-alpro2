@@ -41,8 +41,8 @@ func main() {
 		status = cekLogin(&anggotaList, nama, password)
 		if status == "" {
 			fmt.Println("Login gagal: nama atau password tidak cocok")
-		} else {
-			fmt.Println("\nSelamat datang,", nama)
+		}else{
+			fmt.Print("\nSelamat datang,", nama)
 			for !menuKeluar {
 				if status == "panitia" {
 					fmt.Println("\nPilih aksi yang ingin dilakukan")
@@ -76,9 +76,6 @@ func main() {
 					}else{
 						fmt.Println("Mohon maaf aksi tidak ditemukan")
 					}
-				}else{
-					fmt.Println("Status tidak dikenali")
-					menuKeluar = true
 				}
 			}
 			menuKeluar = false
@@ -87,7 +84,8 @@ func main() {
 }
 
 func cekLogin(anggotaList *tabAnggota, nama, password string) string {
-	for i := 0; i < 3; i++ {
+	var i int
+	for i = 0; i < 3; i++ {
 		if anggotaList[i].nama == nama && anggotaList[i].password == password {
 			return anggotaList[i].status
 		}
@@ -96,7 +94,8 @@ func cekLogin(anggotaList *tabAnggota, nama, password string) string {
 }
 
 func cariSlotKosong(kandidatList *tabKandidat) int {
-	for i := 0; i < NMAX; i++ {
+	var i int
+	for i = 0; i < NMAX; i++ {
 		if kandidatList[i].nomorUrut == 0 {
 			return i
 		}
@@ -106,7 +105,7 @@ func cariSlotKosong(kandidatList *tabKandidat) int {
 
 func crud(kandidatList *tabKandidat) {
 	var aksi int
-	fmt.Println("CRUD Data Kandidat")
+	fmt.Println("\nCRUD Data Kandidat")
 	fmt.Println("1 Tambah Kandidat\n2 Update Kandidat\n3 Hapus Kandidat\n4 Kembali")
 	fmt.Print("Masukkan Aksi : ")
 	fmt.Scan(&aksi)
@@ -127,10 +126,6 @@ func tambah(kandidatList *tabKandidat) {
 	var slot int
 	fmt.Println("Tambah Kandidat")
 	slot = cariSlotKosong(kandidatList)
-	if slot == -1 {
-		fmt.Println("Maaf, array penuh!")
-		return
-	}
 	
 	fmt.Print("Masukkan Nomor Urut : ")
 	fmt.Scan(&kandidatList[slot].nomorUrut)
@@ -147,7 +142,23 @@ func tambah(kandidatList *tabKandidat) {
 }
 
 func update(kandidatList *tabKandidat) {
+	var nomor, i int
 	fmt.Println("Update Kandidat")
+	fmt.Print("Masukkan nomor urut kandidat yang ingin diupdate : ")
+	fmt.Scan(&nomor)
+	for i = 0; i < NMAX; i++ {
+		if kandidatList[i].nomorUrut == nomor {
+			fmt.Print("Masukkan Nama : ")
+			fmt.Scan(&kandidatList[i].nama)
+			fmt.Print("Masukkan Visi : ")
+			fmt.Scan(&kandidatList[i].visi)
+			fmt.Print("Masukkan Misi : ")
+			fmt.Scan(&kandidatList[i].misi)
+			fmt.Printf("Kandidat nomor urut %d berhasil diupdate!\n", kandidatList[i].nomorUrut)
+			return
+		}
+	}
+	fmt.Println("Kandidat tidak ditemukan!")
 }
 
 func hapus(kandidatList *tabKandidat) {
@@ -176,13 +187,12 @@ func voting(kandidatList *tabKandidat) {
 }
 
 func tabel(kandidatList *tabKandidat) {
+	var i int
 	fmt.Println("Tabel Kandidat")
+	for i = 0; i < NMAX; i++ {
+		if kandidatList[i].nomorUrut != 0 {
+			fmt.Println("Nomor Urut | Nama | Visi | Misi | Jumlah Vote")
+			fmt.Printf("%d | %s | %s | %s | %d\n\n", kandidatList[i].nomorUrut, kandidatList[i].nama, kandidatList[i].visi, kandidatList[i].misi, kandidatList[i].vote)
+		}
+	}
 }
-
-func keluar() {
-	fmt.Println("Keluar")
-}
-
-// User panitia dan anggota input biasa, atau mau buat tambah data pengguna? tapi klo ada data pengguna terus log out, data votingnya ilang dong?
-// dalam tambah kandidat : input nomor urut, visi misi
-// didalam tabel kandidat : ada search data berdasarkan nomor urut, mengurutkan data berdasarkan suara terbanyak atau nomor urut, menampikan statistik presentase masing masing kandidat, total pemilihan suara yang sudah masuk
