@@ -17,11 +17,13 @@ type anggota struct{
 type tabKandidat [NMAX] kandidat
 type tabAnggota [NMAX] anggota
 var jumlahKandidat int = 0
+var jumlahAnggota int = 0
 
 func isiAnggota(anggotaList *tabAnggota) {
 	anggotaList[0] = anggota{"reksa", "reksa1", "panitia"}
 	anggotaList[1] = anggota{"amel", "amel1", "anggota"}
 	anggotaList[2] = anggota{"aldi", "aldi1", "anggota"}
+	jumlahAnggota = 3
 }
 
 func main() {
@@ -85,7 +87,7 @@ func main() {
 
 func cekLogin(anggotaList *tabAnggota, nama, password string) string {
 	var i int
-	for i = 0; i < 3; i++ {
+	for i = 0; i < jumlahAnggota; i++ {
 		if anggotaList[i].nama == nama && anggotaList[i].password == password {
 			return anggotaList[i].status
 		}
