@@ -195,4 +195,16 @@ func tabel(kandidatList *tabKandidat) {
 			fmt.Printf("%d | %s | %s | %s | %d\n\n", kandidatList[i].nomorUrut, kandidatList[i].nama, kandidatList[i].visi, kandidatList[i].misi, kandidatList[i].vote)
 		}
 	}
+<<<<<<< Updated upstream
 }
+=======
+}
+
+func keluar() {
+	fmt.Println("Keluar")
+}
+
+// User panitia dan anggota input biasa, atau mau buat tambah data pengguna? tapi klo ada data pengguna terus log out, data votingnya ilang dong?
+// dalam tambah kandidat : input nomor urut, visi misi
+// didalam tabel kandidat : ada search data berdasarkan nomor urut, mengurutkan data berdasarkan suara terbanyak atau nomor urut, menampikan statistik presentase masing masing kandidat, total pemilihan suara yang sudah masuk
+>>>>>>> Stashed changes
