@@ -148,7 +148,7 @@ func update(kandidatList *tabKandidat) {
 	fmt.Println("Update Kandidat")
 	fmt.Print("Masukkan nomor urut kandidat yang ingin diupdate : ")
 	fmt.Scan(&nomor)
-	for i = 0; i < NMAX; i++ {
+	for i = 0; i < len(kandidatList); i++ {
 		if kandidatList[i].nomorUrut == nomor {
 			fmt.Print("Masukkan Nama : ")
 			fmt.Scan(&kandidatList[i].nama)
@@ -169,7 +169,7 @@ func hapus(kandidatList *tabKandidat) {
 	fmt.Print("Masukkan Nomor Urut Kandidat yang akan dihapus : ")
 	fmt.Scan(&nomorUrut)
 	
-	for i = 0; i < NMAX; i++ {
+	for i = 0; i < len(kandidatList); i++ {
 		if kandidatList[i].nomorUrut == nomorUrut {
 			kandidatList[i].nomorUrut = 0
 			kandidatList[i].nama = ""
@@ -185,7 +185,8 @@ func hapus(kandidatList *tabKandidat) {
 }
 
 func search(kandidatList *tabKandidat, nomorUrut int) int {
-	for i := 0; i < len(kandidatList); i++ {
+	var i int
+	for i = 0; i < len(kandidatList); i++ {
 		if kandidatList[i].nomorUrut == nomorUrut {
 			kandidatList[i].vote++
 			return i
@@ -212,7 +213,7 @@ func tabel(kandidatList *tabKandidat) {
 	var i int
 	fmt.Println("Tabel Kandidat")
 	fmt.Println("Nomor Urut | Nama | Visi | Misi | Jumlah Vote")
-	for i = 0; i < NMAX; i++ {
+	for i = 0; i < len(kandidatList); i++ {
 		if kandidatList[i].nomorUrut != 0 {
 			fmt.Printf("%d | %s | %s | %s | %d\n", kandidatList[i].nomorUrut, kandidatList[i].nama, kandidatList[i].visi, kandidatList[i].misi, kandidatList[i].vote)
 		}
