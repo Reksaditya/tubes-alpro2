@@ -230,10 +230,10 @@ func voting(kandidatList *tabKandidat) {
 func tabel(kandidatList *tabKandidat) {
 	var i int
 	fmt.Println("Tabel Kandidat")
-	fmt.Printf("%-5s | %-20s | %-50s | %-50s | %-5s\n", "Nomor", "Nama", "Visi", "Misi", "Jumlah Vote")
+	fmt.Printf("%-5s | %-20s | %-40s | %-40s | %-5s\n", "Nomor", "Nama", "Visi", "Misi", "Jumlah Vote")
 	for i = 0; i < len(kandidatList); i++ {
 		if kandidatList[i].nomorUrut != 0 {
-			fmt.Printf("%-5d | %-20s | %-50s | %-50s | %-5d\n", kandidatList[i].nomorUrut, kandidatList[i].nama, kandidatList[i].visi, kandidatList[i].misi, kandidatList[i].vote)
+			fmt.Printf("%-5d | %-20s | %-40s | %-40s | %-5d\n", kandidatList[i].nomorUrut, kandidatList[i].nama, kandidatList[i].visi, kandidatList[i].misi, kandidatList[i].vote)
 		}
 	}
 }
