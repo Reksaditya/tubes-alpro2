@@ -228,7 +228,7 @@ func voting(kandidatList *tabKandidat) {
 }
 
 func tabel(kandidatList *tabKandidat) {
-	var i int
+	var i, aksi, nomorUrut, index int
 	fmt.Println("Tabel Kandidat")
 	fmt.Printf("%-5s | %-20s | %-40s | %-40s | %-5s\n", "Nomor", "Nama", "Visi", "Misi", "Jumlah Vote")
 	for i = 0; i < len(kandidatList); i++ {
@@ -236,4 +236,92 @@ func tabel(kandidatList *tabKandidat) {
 			fmt.Printf("%-5d | %-20s | %-40s | %-40s | %-5d\n", kandidatList[i].nomorUrut, kandidatList[i].nama, kandidatList[i].visi, kandidatList[i].misi, kandidatList[i].vote)
 		}
 	}
+	fmt.Println("Pilih aksi yang ingin dilakukan")
+	fmt.Println("1 Urutkan berdasarkan jumlah vote\n2 Urutkan berdasarkan nomor urut\n3 Cari kandidat berdasarkan nomor urut\n4 Kembali")
+	fmt.Print("Masukkan Aksi : ")
+	fmt.Scan(&aksi)
+	if aksi == 1 {
+		insertionSortByVote(kandidatList, jumlahKandidat)
+		fmt.Println("Tabel Kandidat (diurutkan berdasarkan jumlah vote)")
+		fmt.Printf("%-5s | %-20s | %-40s | %-40s | %-5s\n", "Nomor", "Nama", "Visi", "Misi", "Jumlah Vote")
+		for i = 0; i < len(kandidatList); i++ {
+			if kandidatList[i].nomorUrut != 0 {
+				fmt.Printf("%-5d | %-20s | %-40s | %-40s | %-5d\n", kandidatList[i].nomorUrut, kandidatList[i].nama, kandidatList[i].visi, kandidatList[i].misi, kandidatList[i].vote)
+			}
+		}
+	} else if aksi == 2 {
+		selectionSortByNomorUrut(kandidatList, jumlahKandidat)
+		fmt.Println("Tabel Kandidat (diurutkan berdasarkan nomor urut)")
+		fmt.Printf("%-5s | %-20s | %-40s | %-40s | %-5s\n", "Nomor", "Nama", "Visi", "Misi", "Jumlah Vote")
+		for i = 0; i < len(kandidatList); i++ {
+			if kandidatList[i].nomorUrut != 0 {
+				fmt.Printf("%-5d | %-20s | %-40s | %-40s | %-5d\n", kandidatList[i].nomorUrut, kandidatList[i].nama, kandidatList[i].visi, kandidatList[i].misi, kandidatList[i].vote)
+			}
+		}
+	} else if aksi == 3 {
+		fmt.Print("Masukkan Nomor Urut Kandidat yang ingin dicari : ")
+		fmt.Scan(&nomorUrut)
+		selectionSortByNomorUrut(kandidatList, jumlahKandidat)
+		index = binarySearch(kandidatList, nomorUrut)
+		if index != -1 {
+			fmt.Printf("Kandidat ditemukan!\n")
+			fmt.Printf("%-5d | %-20s | %-40s | %-40s | %-5d\n", kandidatList[index].nomorUrut, kandidatList[index].nama, kandidatList[index].visi, kandidatList[index].misi, kandidatList[index].vote)
+		} else {
+			fmt.Println("Kandidat tidak ditemukan!")
+		}
+	} else if aksi == 4 {
+		return
+	} else {
+		fmt.Println("Aksi tidak valid!")
+	}
+}
+
+func insertionSortByVote(kandidatList *tabKandidat, n int) {
+	var i, j int
+	var key kandidat
+	for i = 1; i < n; i++ {
+		key = kandidatList[i]
+		j = i - 1
+		for j >= 0 && kandidatList[j].vote < key.vote {
+			kandidatList[j+1] = kandidatList[j]
+			j--
+		}
+		kandidatList[j+1] = key
+	}
+}
+
+func selectionSortByNomorUrut(kandidatList *tabKandidat, n int) {
+	var i, j, minIdx int
+	var temp kandidat
+	for i = 0; i < n; i++ {
+		minIdx = i
+		for j = i + 1; j < n; j++ {
+			if kandidatList[j].nomorUrut < kandidatList[minIdx].nomorUrut && kandidatList[j].nomorUrut != 0 {
+				minIdx = j
+			}
+		}
+		if minIdx != i {
+			temp = kandidatList[i]
+			kandidatList[i] = kandidatList[minIdx]
+			kandidatList[minIdx] = temp
+		}
+	}
+}
+
+func binarySearch(kandidatList *tabKandidat, nomorUrut int) int {
+	var left, right, mid int
+	left = 0
+	right = jumlahKandidat - 1
+
+	for left <= right {
+		mid = (left + right) / 2
+		if kandidatList[mid].nomorUrut == nomorUrut {
+			return mid
+		} else if kandidatList[mid].nomorUrut < nomorUrut {
+			left = mid + 1
+		} else {
+			right = mid - 1
+		}
+	}
+	return -1
 }
