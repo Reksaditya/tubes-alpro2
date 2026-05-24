@@ -1,9 +1,7 @@
 package main
-
 import "fmt"
 
 const NMAX int = 100
-
 type kandidat struct {
 	nomorUrut int
 	nama      string
@@ -19,35 +17,32 @@ type anggota struct {
 type tabKandidat [NMAX]kandidat
 type tabAnggota [NMAX]anggota
 
-var jumlahKandidat int = 0
-var jumlahAnggota int = 0
-
-func isiAnggota(anggotaList *tabAnggota) {
+func isiAnggota(anggotaList *tabAnggota, jumlahAnggota *int) {
 	anggotaList[0] = anggota{"reksa", "reksa1", "panitia"}
 	anggotaList[1] = anggota{"amel", "amel1", "anggota"}
 	anggotaList[2] = anggota{"aldi", "aldi1", "anggota"}
-	jumlahAnggota = 3
+	*jumlahAnggota = 3
 }
 
 func main() {
-	var aksi int
+	var aksi, jumlahAnggota, jumlahKandidat int
 	var nama, password, status string
 	var kandidatList tabKandidat
 	var anggotaList tabAnggota
-	var programKeluar, menuKeluar bool = false, false
+	var programKeluar, menuKeluar bool
 
-	isiAnggota(&anggotaList)
+	isiAnggota(&anggotaList, &jumlahAnggota)
 	for !programKeluar {
 		fmt.Print("Masukkan Nama : ")
 		fmt.Scan(&nama)
 		fmt.Print("Masukkan Password : ")
 		fmt.Scan(&password)
 
-		status = cekLogin(&anggotaList, nama, password)
+		status = cekLogin(&anggotaList, nama, password, jumlahAnggota)
 		if status == "" {
 			fmt.Println("Login gagal: nama atau password tidak cocok")
 		}else{
-			fmt.Print("\nSelamat datang,", nama)
+			fmt.Print("\nSelamat datang, ", nama)
 			for !menuKeluar {
 				if status == "panitia" {
 					fmt.Println("\nPilih aksi yang ingin dilakukan")
@@ -55,11 +50,11 @@ func main() {
 					fmt.Print("Masukkan Aksi : ")
 					fmt.Scan(&aksi)
 					if aksi == 1 {
-						crud(&kandidatList)
+						crud(&kandidatList, &jumlahKandidat)
 					} else if aksi == 2 {
 						voting(&kandidatList)
 					} else if aksi == 3 {
-						tabel(&kandidatList)
+						tabel(&kandidatList, jumlahKandidat)
 					} else if aksi == 4 {
 						menuKeluar = true
 						fmt.Println("Terima kasih, sampai jumpa!")
@@ -74,7 +69,7 @@ func main() {
 					if aksi == 1 {
 						voting(&kandidatList)
 					} else if aksi == 2 {
-						tabel(&kandidatList)
+						tabel(&kandidatList, jumlahKandidat)
 					} else if aksi == 3 {
 						menuKeluar = true
 						fmt.Println("Terima kasih, sampai jumpa!")
@@ -88,7 +83,7 @@ func main() {
 	}
 }
 
-func cekLogin(anggotaList *tabAnggota, nama, password string) string {
+func cekLogin(anggotaList *tabAnggota, nama, password string, jumlahAnggota int) string {
 	var i int
 	for i = 0; i < jumlahAnggota; i++ {
 		if anggotaList[i].nama == nama && anggotaList[i].password == password {
@@ -108,18 +103,18 @@ func cariSlotKosong(kandidatList *tabKandidat) int {
 	return -1
 }
 
-func crud(kandidatList *tabKandidat) {
+func crud(kandidatList *tabKandidat, jumlahKandidat *int) {
 	var aksi int
 	fmt.Println("\nCRUD Data Kandidat")
 	fmt.Println("1 Tambah Kandidat\n2 Update Kandidat\n3 Hapus Kandidat\n4 Kembali")
 	fmt.Print("Masukkan Aksi : ")
 	fmt.Scan(&aksi)
 	if aksi == 1 {
-		tambah(kandidatList)
+		tambah(kandidatList, jumlahKandidat)
 	} else if aksi == 2 {
 		update(kandidatList)
 	} else if aksi == 3 {
-		hapus(kandidatList)
+		hapus(kandidatList, jumlahKandidat)
 	} else if aksi == 4 {
 		return
 	} else {
@@ -127,8 +122,8 @@ func crud(kandidatList *tabKandidat) {
 	}
 }
 
-func tambah(kandidatList *tabKandidat) {
-	var slot int
+func tambah(kandidatList *tabKandidat, jumlahKandidat *int) {
+	var slot, i int
 	var isFound bool
 
 	fmt.Println("Tambah Kandidat")
@@ -138,8 +133,8 @@ func tambah(kandidatList *tabKandidat) {
 	fmt.Scan(&kandidatList[slot].nomorUrut)
 	
 	isFound = false
-	i := 0
-	for i < jumlahKandidat && !isFound {
+	i = 0
+	for i < *jumlahKandidat && !isFound {
 		if kandidatList[i].nomorUrut == kandidatList[slot].nomorUrut {
 			isFound = true
 		}	
@@ -158,7 +153,7 @@ func tambah(kandidatList *tabKandidat) {
 	fmt.Print("Masukkan Misi : ")
 	fmt.Scan(&kandidatList[slot].misi)
 	kandidatList[slot].vote = 0
-	jumlahKandidat++
+	*jumlahKandidat++
 	fmt.Printf("Kandidat nomor urut %d berhasil ditambahkan!\n", kandidatList[slot].nomorUrut)
 	return
 }
@@ -183,7 +178,7 @@ func update(kandidatList *tabKandidat) {
 	fmt.Println("Kandidat tidak ditemukan!")
 }
 
-func hapus(kandidatList *tabKandidat) {
+func hapus(kandidatList *tabKandidat, jumlahKandidat *int) {
 	var nomorUrut, i int
 	fmt.Println("Hapus Kandidat")
 	fmt.Print("Masukkan Nomor Urut Kandidat yang akan dihapus : ")
@@ -195,7 +190,7 @@ func hapus(kandidatList *tabKandidat) {
 			kandidatList[i].visi = ""
 			kandidatList[i].misi = ""
 			kandidatList[i].vote = 0
-			jumlahKandidat--
+			*jumlahKandidat--
 			fmt.Printf("Kandidat nomor urut %d berhasil dihapus!\n", nomorUrut)
 			return
 		}
@@ -204,7 +199,8 @@ func hapus(kandidatList *tabKandidat) {
 }
 
 func seqSearch(kandidatList *tabKandidat, nomorUrut int) int {
-	for i := 0; i < len(kandidatList); i++ {
+	var i int
+	for i = 0; i < len(kandidatList); i++ {
 		if kandidatList[i].nomorUrut == nomorUrut {
 			kandidatList[i].vote++
 			return i
@@ -227,7 +223,7 @@ func voting(kandidatList *tabKandidat) {
 	}
 }
 
-func tabel(kandidatList *tabKandidat) {
+func tabel(kandidatList *tabKandidat, jumlahKandidat int) {
 	var i, aksi, nomorUrut, index int
 	fmt.Println("Tabel Kandidat")
 	fmt.Printf("%-5s | %-20s | %-40s | %-40s | %-5s\n", "Nomor", "Nama", "Visi", "Misi", "Jumlah Vote")
@@ -237,7 +233,7 @@ func tabel(kandidatList *tabKandidat) {
 		}
 	}
 	fmt.Println("Pilih aksi yang ingin dilakukan")
-	fmt.Println("1 Urutkan berdasarkan jumlah vote\n2 Urutkan berdasarkan nomor urut\n3 Cari kandidat berdasarkan nomor urut\n4 Kembali")
+	fmt.Println("1 Urutkan berdasarkan jumlah vote\n2 Urutkan berdasarkan nomor urut\n3 Cari kandidat berdasarkan nomor urut\n4 Tampilkan Statistik\n5 Kembali")
 	fmt.Print("Masukkan Aksi : ")
 	fmt.Scan(&aksi)
 	if aksi == 1 {
@@ -262,7 +258,7 @@ func tabel(kandidatList *tabKandidat) {
 		fmt.Print("Masukkan Nomor Urut Kandidat yang ingin dicari : ")
 		fmt.Scan(&nomorUrut)
 		selectionSortByNomorUrut(kandidatList, jumlahKandidat)
-		index = binarySearch(kandidatList, nomorUrut)
+		index = binarySearch(kandidatList, nomorUrut, jumlahKandidat)
 		if index != -1 {
 			fmt.Printf("Kandidat ditemukan!\n")
 			fmt.Printf("%-5d | %-20s | %-40s | %-40s | %-5d\n", kandidatList[index].nomorUrut, kandidatList[index].nama, kandidatList[index].visi, kandidatList[index].misi, kandidatList[index].vote)
@@ -270,7 +266,7 @@ func tabel(kandidatList *tabKandidat) {
 			fmt.Println("Kandidat tidak ditemukan!")
 		}
 	} else if aksi == 4 {
-		return
+		tampilkanStatistik(kandidatList, jumlahKandidat)
 	} else {
 		fmt.Println("Aksi tidak valid!")
 	}
@@ -308,7 +304,7 @@ func selectionSortByNomorUrut(kandidatList *tabKandidat, n int) {
 	}
 }
 
-func binarySearch(kandidatList *tabKandidat, nomorUrut int) int {
+func binarySearch(kandidatList *tabKandidat, nomorUrut, jumlahKandidat int) int {
 	var left, right, mid int
 	left = 0
 	right = jumlahKandidat - 1
@@ -324,4 +320,22 @@ func binarySearch(kandidatList *tabKandidat, nomorUrut int) int {
 		}
 	}
 	return -1
+}
+
+func tampilkanStatistik(kandidatList *tabKandidat, n int) {
+	var totalVotes, i int
+	var persentase float64
+	for i = 0; i < n; i++ {
+		totalVotes = totalVotes + kandidatList[i].vote
+	}
+	fmt.Printf("Total Votes: %d\n", totalVotes)
+	if totalVotes > 0 {
+		fmt.Printf("Persentase Votes:\n")
+		for i = 0; i < n; i++ {
+			if kandidatList[i].nomorUrut != 0 {
+				persentase = float64(kandidatList[i].vote) / float64(totalVotes) * 100
+				fmt.Printf("- %s: %.2f%%\n", kandidatList[i].nama, persentase)
+			}
+		}
+	}
 }
