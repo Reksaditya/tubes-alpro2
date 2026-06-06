@@ -210,8 +210,14 @@ func seqSearch(kandidatList *tabKandidat, nomorUrut int) int {
 }
 
 func voting(kandidatList *tabKandidat) {
-	var nomorUrut, index int
+	var nomorUrut, index, i int
 	fmt.Println("Voting")
+	fmt.Printf("%-5s | %-20s\n", "Nomor", "Nama")
+	for i = 0; i < len(kandidatList); i++ {
+		if kandidatList[i].nomorUrut != 0 {
+			fmt.Printf("%-5d | %-20s\n", kandidatList[i].nomorUrut, kandidatList[i].nama)
+		}
+	}
 	fmt.Print("Masukkan Nomor Urut Yang Ingin di Vote : ")
 	fmt.Scan(&nomorUrut)
 	index = seqSearch(kandidatList, nomorUrut)
@@ -267,6 +273,8 @@ func tabel(kandidatList *tabKandidat, jumlahKandidat int) {
 		}
 	} else if aksi == 4 {
 		tampilkanStatistik(kandidatList, jumlahKandidat)
+	} else if aksi == 5 {
+		return
 	} else {
 		fmt.Println("Aksi tidak valid!")
 	}
