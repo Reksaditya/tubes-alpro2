@@ -1,7 +1,9 @@
 package main
+
 import "fmt"
 
 const NMAX int = 100
+
 type kandidat struct {
 	nomorUrut int
 	nama      string
@@ -35,50 +37,55 @@ func main() {
 	for !programKeluar {
 		fmt.Print("Masukkan Nama : ")
 		fmt.Scan(&nama)
-		fmt.Print("Masukkan Password : ")
-		fmt.Scan(&password)
 
-		status = cekLogin(&anggotaList, nama, password, jumlahAnggota)
-		if status == "" {
-			fmt.Println("Login gagal: nama atau password tidak cocok")
-		}else{
-			fmt.Print("\nSelamat datang, ", nama)
-			for !menuKeluar {
-				if status == "panitia" {
-					fmt.Println("\nPilih aksi yang ingin dilakukan")
-					fmt.Println("1 CRUD Data Kandidat\n2 Voting\n3 Tabel Kandidat\n4 Keluar")
-					fmt.Print("Masukkan Aksi : ")
-					fmt.Scan(&aksi)
-					if aksi == 1 {
-						crud(&kandidatList, &jumlahKandidat)
-					} else if aksi == 2 {
-						voting(&kandidatList)
-					} else if aksi == 3 {
-						tabel(&kandidatList, jumlahKandidat)
-					} else if aksi == 4 {
-						menuKeluar = true
-						fmt.Println("Terima kasih, sampai jumpa!")
-					} else {
-						fmt.Println("Mohon maaf aksi tidak ditemukan")
-					}
-				} else if status == "anggota" {
-					fmt.Println("\nPilih aksi yang ingin dilakukan")
-					fmt.Println("1 Voting\n2 Tabel Kandidat\n3 Keluar")
-					fmt.Print("Masukkan Aksi : ")
-					fmt.Scan(&aksi)
-					if aksi == 1 {
-						voting(&kandidatList)
-					} else if aksi == 2 {
-						tabel(&kandidatList, jumlahKandidat)
-					} else if aksi == 3 {
-						menuKeluar = true
-						fmt.Println("Terima kasih, sampai jumpa!")
-					} else {
-						fmt.Println("Mohon maaf aksi tidak ditemukan")
+		if nama == "quit" {
+			programKeluar = true
+		} else {
+			fmt.Print("Masukkan Password : ")
+			fmt.Scan(&password)
+
+			status = cekLogin(&anggotaList, nama, password, jumlahAnggota)
+			if status == "" {
+				fmt.Println("Login gagal: nama atau password tidak cocok")
+			} else {
+				fmt.Print("\nSelamat datang, ", nama)
+				for !menuKeluar {
+					if status == "panitia" {
+						fmt.Println("\nPilih aksi yang ingin dilakukan")
+						fmt.Println("1 CRUD Data Kandidat\n2 Voting\n3 Tabel Kandidat\n4 Keluar")
+						fmt.Print("Masukkan Aksi : ")
+						fmt.Scan(&aksi)
+						if aksi == 1 {
+							crud(&kandidatList, &jumlahKandidat)
+						} else if aksi == 2 {
+							voting(&kandidatList)
+						} else if aksi == 3 {
+							tabel(&kandidatList, jumlahKandidat)
+						} else if aksi == 4 {
+							menuKeluar = true
+							fmt.Println("Terima kasih, sampai jumpa!")
+						} else {
+							fmt.Println("Mohon maaf aksi tidak ditemukan")
+						}
+					} else if status == "anggota" {
+						fmt.Println("\nPilih aksi yang ingin dilakukan")
+						fmt.Println("1 Voting\n2 Tabel Kandidat\n3 Keluar")
+						fmt.Print("Masukkan Aksi : ")
+						fmt.Scan(&aksi)
+						if aksi == 1 {
+							voting(&kandidatList)
+						} else if aksi == 2 {
+							tabel(&kandidatList, jumlahKandidat)
+						} else if aksi == 3 {
+							menuKeluar = true
+							fmt.Println("Terima kasih, sampai jumpa!")
+						} else {
+							fmt.Println("Mohon maaf aksi tidak ditemukan")
+						}
 					}
 				}
+				menuKeluar = false
 			}
-			menuKeluar = false
 		}
 	}
 }
@@ -128,16 +135,16 @@ func tambah(kandidatList *tabKandidat, jumlahKandidat *int) {
 
 	fmt.Println("Tambah Kandidat")
 	slot = cariSlotKosong(kandidatList)
-	
+
 	fmt.Print("Masukkan Nomor Urut : ")
 	fmt.Scan(&kandidatList[slot].nomorUrut)
-	
+
 	isFound = false
 	i = 0
 	for i < *jumlahKandidat && !isFound {
 		if kandidatList[i].nomorUrut == kandidatList[slot].nomorUrut {
 			isFound = true
-		}	
+		}
 		i++
 	}
 
@@ -145,7 +152,7 @@ func tambah(kandidatList *tabKandidat, jumlahKandidat *int) {
 		fmt.Println("Nomor urut sudah digunakan, silakan coba lagi dengan nomor urut yang berbeda.")
 		return
 	}
-	
+
 	fmt.Print("Masukkan Nama : ")
 	fmt.Scan(&kandidatList[slot].nama)
 	fmt.Print("Masukkan Visi : ")
