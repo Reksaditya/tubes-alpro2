@@ -1,7 +1,9 @@
 package main
+
 import "fmt"
 
 const NMAX int = 100
+
 type kandidat struct {
 	nomorUrut int
 	nama      string
@@ -13,15 +15,16 @@ type anggota struct {
 	nama     string
 	password string
 	status   string
+	isVoted  bool
 }
 type tabKandidat [NMAX]kandidat
 type tabAnggota [NMAX]anggota
 
 func isiAnggota(anggotaList *tabAnggota, jumlahAnggota *int) {
-	anggotaList[0] = anggota{"reksa", "reksa1", "panitia"}
-	anggotaList[1] = anggota{"amel", "amel1", "panitia"}
-	anggotaList[2] = anggota{"aldi", "aldi1", "anggota"}
-	anggotaList[3] = anggota{"rafa", "rafa1", "anggota"}
+	anggotaList[0] = anggota{"reksa", "reksa1", "panitia", false}
+	anggotaList[1] = anggota{"amel", "amel1", "panitia", false}
+	anggotaList[2] = anggota{"aldi", "aldi1", "anggota", false}
+	anggotaList[3] = anggota{"rafa", "rafa1", "anggota", false}
 	*jumlahAnggota = 4
 }
 
@@ -30,6 +33,7 @@ func main() {
 	var nama, password, status string
 	var kandidatList tabKandidat
 	var anggotaList tabAnggota
+	var user anggota
 	var programKeluar, menuKeluar bool = false, false
 
 	programKeluar = false
@@ -60,7 +64,7 @@ func main() {
 						if aksi == 1 {
 							crud(&kandidatList, &jumlahKandidat)
 						} else if aksi == 2 {
-							voting(&kandidatList, jumlahKandidat)
+							voting(&kandidatList, jumlahKandidat, &user)
 						} else if aksi == 3 {
 							tabel(&kandidatList, jumlahKandidat)
 						} else if aksi == 4 {
@@ -75,7 +79,7 @@ func main() {
 						fmt.Print("Masukkan Aksi : ")
 						fmt.Scan(&aksi)
 						if aksi == 1 {
-							voting(&kandidatList, jumlahKandidat)
+							voting(&kandidatList, jumlahKandidat, &user)
 						} else if aksi == 2 {
 							tabel(&kandidatList, jumlahKandidat)
 						} else if aksi == 3 {
@@ -195,12 +199,12 @@ func hapus(kandidatList *tabKandidat, jumlahKandidat *int) {
 	fmt.Scan(&nomorUrut)
 	for i = 0; i < *jumlahKandidat; i++ {
 		if kandidatList[i].nomorUrut == nomorUrut {
-			for j = i; j < *jumlahKandidat - 1; j++ {
+			for j = i; j < *jumlahKandidat-1; j++ {
 				kandidatList[j] = kandidatList[j+1]
 			}
 
 			(*kandidatList)[*jumlahKandidat-1] = kandidat{}
-			
+
 			*jumlahKandidat--
 			fmt.Printf("Kandidat nomor urut %d berhasil dihapus!\n", nomorUrut)
 			return
@@ -220,7 +224,7 @@ func seqSearch(kandidatList *tabKandidat, nomorUrut int, jumlahKandidat int) int
 	return -1
 }
 
-func voting(kandidatList *tabKandidat, jumlahKandidat int) {
+func voting(kandidatList *tabKandidat, jumlahKandidat int, u *anggota) {
 	var nomorUrut, index, i int
 	fmt.Println("\nVoting")
 	fmt.Printf("%-5s | %-20s\n", "Nomor", "Nama")
@@ -229,14 +233,22 @@ func voting(kandidatList *tabKandidat, jumlahKandidat int) {
 			fmt.Printf("%-5d | %-20s\n", kandidatList[i].nomorUrut, kandidatList[i].nama)
 		}
 	}
-	fmt.Print("Masukkan Nomor Urut Yang Ingin di Vote : ")
-	fmt.Scan(&nomorUrut)
-	index = seqSearch(kandidatList, nomorUrut, jumlahKandidat)
 
-	if index != -1 {
-		fmt.Printf("Terima kasih telah memilih kandidat nomor urut %d!\n", nomorUrut)
+	if !u.isVoted {
+		fmt.Print("Masukkan Nomor Urut Yang Ingin di Vote : ")
+		fmt.Scan(&nomorUrut)
+		index = seqSearch(kandidatList, nomorUrut, jumlahKandidat)
+
+		if index != -1 {
+			kandidatList[index].vote++
+			u.isVoted = true
+
+			fmt.Printf("Terima kasih telah memilih kandidat nomor urut %d!\n", nomorUrut)
+		} else {
+			fmt.Println("Kandidat tidak ditemukan!")
+		}
 	} else {
-		fmt.Println("Kandidat tidak ditemukan!")
+		fmt.Println("Anda telah melakukan voting!")
 	}
 }
 
