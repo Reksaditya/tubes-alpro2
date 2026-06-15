@@ -173,23 +173,23 @@ func tambah(kandidatList *tabKandidat, jumlahKandidat *int) {
 }
 
 func update(kandidatList *tabKandidat, jumlahKandidat int) {
-	var nomor, i int
+	var nomor, index int
 	fmt.Println("\nUpdate Kandidat")
 	fmt.Print("Masukkan nomor urut kandidat yang ingin diupdate : ")
 	fmt.Scan(&nomor)
-	for i = 0; i < jumlahKandidat; i++ {
-		if kandidatList[i].nomorUrut == nomor {
-			fmt.Print("Masukkan Nama : ")
-			fmt.Scan(&kandidatList[i].nama)
-			fmt.Print("Masukkan Visi : ")
-			fmt.Scan(&kandidatList[i].visi)
-			fmt.Print("Masukkan Misi : ")
-			fmt.Scan(&kandidatList[i].misi)
-			fmt.Printf("Kandidat nomor urut %d berhasil diupdate!\n", kandidatList[i].nomorUrut)
-			return
-		}
+	index = seqSearch(kandidatList, nomor, jumlahKandidat)
+	if index != -1 {
+		fmt.Print("Masukkan Nama : ")
+		fmt.Scan(&kandidatList[index].nama)
+		fmt.Print("Masukkan Visi : ")
+		fmt.Scan(&kandidatList[index].visi)
+		fmt.Print("Masukkan Misi : ")
+		fmt.Scan(&kandidatList[index].misi)
+		fmt.Printf("Kandidat nomor urut %d berhasil diupdate!\n", kandidatList[index].nomorUrut)
+		return
+	} else {
+		fmt.Println("Kandidat tidak ditemukan!")
 	}
-	fmt.Println("Kandidat tidak ditemukan!")
 }
 
 func hapus(kandidatList *tabKandidat, jumlahKandidat *int) {
