@@ -29,16 +29,16 @@ func isiAnggota(anggotaList *tabAnggota, jumlahAnggota *int) {
 }
 
 func main() {
-	var aksi, jumlahAnggota, jumlahKandidat int
+	var aksi, jumlahAnggota, jumlahKandidat, index int
 	var nama, password, status string
 	var kandidatList tabKandidat
-	var anggotaList tabAnggota
-	var user anggota
+	var anggotaList, user tabAnggota
 	var programKeluar, menuKeluar bool = false, false
 
 	programKeluar = false
 	menuKeluar = false
 	isiAnggota(&anggotaList, &jumlahAnggota)
+
 	for !programKeluar {
 		fmt.Println("\nSelamat datang di Sistem E-Voting!")
 		fmt.Print("Masukkan Nama : ")
@@ -50,6 +50,7 @@ func main() {
 			fmt.Print("Masukkan Password : ")
 			fmt.Scan(&password)
 
+			index = indexLogin(&anggotaList, nama, password, jumlahAnggota)
 			status = cekLogin(&anggotaList, nama, password, jumlahAnggota)
 			if status == "" {
 				fmt.Println("Login gagal: nama atau password tidak cocok")
@@ -64,7 +65,7 @@ func main() {
 						if aksi == 1 {
 							crud(&kandidatList, &jumlahKandidat)
 						} else if aksi == 2 {
-							voting(&kandidatList, jumlahKandidat, &user)
+							voting(&kandidatList, jumlahKandidat, &user[index])
 						} else if aksi == 3 {
 							tabel(&kandidatList, jumlahKandidat)
 						} else if aksi == 4 {
@@ -79,7 +80,7 @@ func main() {
 						fmt.Print("Masukkan Aksi : ")
 						fmt.Scan(&aksi)
 						if aksi == 1 {
-							voting(&kandidatList, jumlahKandidat, &user)
+							voting(&kandidatList, jumlahKandidat, &user[index])
 						} else if aksi == 2 {
 							tabel(&kandidatList, jumlahKandidat)
 						} else if aksi == 3 {
@@ -104,6 +105,16 @@ func cekLogin(anggotaList *tabAnggota, nama, password string, jumlahAnggota int)
 		}
 	}
 	return ""
+}
+
+func indexLogin(anggotaList *tabAnggota, nama, password string, jumlahAnggota int) int {
+	var i int
+	for i = 0; i < jumlahAnggota; i++ {
+		if anggotaList[i].nama == nama && anggotaList[i].password == password {
+			return i
+		}
+	}
+	return -1
 }
 
 func crud(kandidatList *tabKandidat, jumlahKandidat *int) {
@@ -237,7 +248,6 @@ func voting(kandidatList *tabKandidat, jumlahKandidat int, u *anggota) {
 		index = seqSearch(kandidatList, nomorUrut, jumlahKandidat)
 
 		if index != -1 {
-			kandidatList[index].vote++
 			u.isVoted = true
 
 			fmt.Printf("Terima kasih telah memilih kandidat nomor urut %d!\n", nomorUrut)
