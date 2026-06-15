@@ -21,9 +21,10 @@ type tabAnggota [NMAX]anggota
 
 func isiAnggota(anggotaList *tabAnggota, jumlahAnggota *int) {
 	anggotaList[0] = anggota{"reksa", "reksa1", "panitia"}
-	anggotaList[1] = anggota{"amel", "amel1", "anggota"}
+	anggotaList[1] = anggota{"amel", "amel1", "panitia"}
 	anggotaList[2] = anggota{"aldi", "aldi1", "anggota"}
-	*jumlahAnggota = 3
+	anggotaList[3] = anggota{"rafa", "rafa1", "anggota"}
+	*jumlahAnggota = 4
 }
 
 func main() {
@@ -31,7 +32,7 @@ func main() {
 	var nama, password, status string
 	var kandidatList tabKandidat
 	var anggotaList tabAnggota
-	var programKeluar, menuKeluar bool
+	var programKeluar, menuKeluar bool = false, false
 
 	isiAnggota(&anggotaList, &jumlahAnggota)
 	for !programKeluar {
@@ -58,7 +59,7 @@ func main() {
 						if aksi == 1 {
 							crud(&kandidatList, &jumlahKandidat)
 						} else if aksi == 2 {
-							voting(&kandidatList)
+							voting(&kandidatList, jumlahKandidat)
 						} else if aksi == 3 {
 							tabel(&kandidatList, jumlahKandidat)
 						} else if aksi == 4 {
@@ -73,7 +74,7 @@ func main() {
 						fmt.Print("Masukkan Aksi : ")
 						fmt.Scan(&aksi)
 						if aksi == 1 {
-							voting(&kandidatList)
+							voting(&kandidatList, jumlahKandidat)
 						} else if aksi == 2 {
 							tabel(&kandidatList, jumlahKandidat)
 						} else if aksi == 3 {
@@ -119,7 +120,7 @@ func crud(kandidatList *tabKandidat, jumlahKandidat *int) {
 	if aksi == 1 {
 		tambah(kandidatList, jumlahKandidat)
 	} else if aksi == 2 {
-		update(kandidatList)
+		update(kandidatList, *jumlahKandidat)
 	} else if aksi == 3 {
 		hapus(kandidatList, jumlahKandidat)
 	} else if aksi == 4 {
@@ -165,12 +166,12 @@ func tambah(kandidatList *tabKandidat, jumlahKandidat *int) {
 	return
 }
 
-func update(kandidatList *tabKandidat) {
+func update(kandidatList *tabKandidat, jumlahKandidat int) {
 	var nomor, i int
 	fmt.Println("Update Kandidat")
 	fmt.Print("Masukkan nomor urut kandidat yang ingin diupdate : ")
 	fmt.Scan(&nomor)
-	for i = 0; i < len(kandidatList); i++ {
+	for i = 0; i < jumlahKandidat; i++ {
 		if kandidatList[i].nomorUrut == nomor {
 			fmt.Print("Masukkan Nama : ")
 			fmt.Scan(&kandidatList[i].nama)
@@ -190,7 +191,7 @@ func hapus(kandidatList *tabKandidat, jumlahKandidat *int) {
 	fmt.Println("Hapus Kandidat")
 	fmt.Print("Masukkan Nomor Urut Kandidat yang akan dihapus : ")
 	fmt.Scan(&nomorUrut)
-	for i = 0; i < len(kandidatList); i++ {
+	for i = 0; i < *jumlahKandidat; i++ {
 		if kandidatList[i].nomorUrut == nomorUrut {
 			kandidatList[i].nomorUrut = 0
 			kandidatList[i].nama = ""
@@ -205,9 +206,9 @@ func hapus(kandidatList *tabKandidat, jumlahKandidat *int) {
 	fmt.Println("Kandidat tidak ditemukan!")
 }
 
-func seqSearch(kandidatList *tabKandidat, nomorUrut int) int {
+func seqSearch(kandidatList *tabKandidat, nomorUrut int, jumlahKandidat int) int {
 	var i int
-	for i = 0; i < len(kandidatList); i++ {
+	for i = 0; i < jumlahKandidat; i++ {
 		if kandidatList[i].nomorUrut == nomorUrut {
 			kandidatList[i].vote++
 			return i
@@ -216,18 +217,18 @@ func seqSearch(kandidatList *tabKandidat, nomorUrut int) int {
 	return -1
 }
 
-func voting(kandidatList *tabKandidat) {
+func voting(kandidatList *tabKandidat, jumlahKandidat int) {
 	var nomorUrut, index, i int
 	fmt.Println("Voting")
 	fmt.Printf("%-5s | %-20s\n", "Nomor", "Nama")
-	for i = 0; i < len(kandidatList); i++ {
+	for i = 0; i < jumlahKandidat; i++ {
 		if kandidatList[i].nomorUrut != 0 {
 			fmt.Printf("%-5d | %-20s\n", kandidatList[i].nomorUrut, kandidatList[i].nama)
 		}
 	}
 	fmt.Print("Masukkan Nomor Urut Yang Ingin di Vote : ")
 	fmt.Scan(&nomorUrut)
-	index = seqSearch(kandidatList, nomorUrut)
+	index = seqSearch(kandidatList, nomorUrut, jumlahKandidat)
 
 	if index != -1 {
 		fmt.Printf("Terima kasih telah memilih kandidat nomor urut %d!\n", nomorUrut)
@@ -240,7 +241,7 @@ func tabel(kandidatList *tabKandidat, jumlahKandidat int) {
 	var i, aksi, nomorUrut, index int
 	fmt.Println("Tabel Kandidat")
 	fmt.Printf("%-5s | %-20s | %-40s | %-40s | %-5s\n", "Nomor", "Nama", "Visi", "Misi", "Jumlah Vote")
-	for i = 0; i < len(kandidatList); i++ {
+	for i = 0; i < jumlahKandidat; i++ {
 		if kandidatList[i].nomorUrut != 0 {
 			fmt.Printf("%-5d | %-20s | %-40s | %-40s | %-5d\n", kandidatList[i].nomorUrut, kandidatList[i].nama, kandidatList[i].visi, kandidatList[i].misi, kandidatList[i].vote)
 		}
@@ -253,7 +254,7 @@ func tabel(kandidatList *tabKandidat, jumlahKandidat int) {
 		insertionSortByVote(kandidatList, jumlahKandidat)
 		fmt.Println("Tabel Kandidat (diurutkan berdasarkan jumlah vote)")
 		fmt.Printf("%-5s | %-20s | %-40s | %-40s | %-5s\n", "Nomor", "Nama", "Visi", "Misi", "Jumlah Vote")
-		for i = 0; i < len(kandidatList); i++ {
+		for i = 0; i < jumlahKandidat; i++ {
 			if kandidatList[i].nomorUrut != 0 {
 				fmt.Printf("%-5d | %-20s | %-40s | %-40s | %-5d\n", kandidatList[i].nomorUrut, kandidatList[i].nama, kandidatList[i].visi, kandidatList[i].misi, kandidatList[i].vote)
 			}
@@ -262,7 +263,7 @@ func tabel(kandidatList *tabKandidat, jumlahKandidat int) {
 		selectionSortByNomorUrut(kandidatList, jumlahKandidat)
 		fmt.Println("Tabel Kandidat (diurutkan berdasarkan nomor urut)")
 		fmt.Printf("%-5s | %-20s | %-40s | %-40s | %-5s\n", "Nomor", "Nama", "Visi", "Misi", "Jumlah Vote")
-		for i = 0; i < len(kandidatList); i++ {
+		for i = 0; i < jumlahKandidat; i++ {
 			if kandidatList[i].nomorUrut != 0 {
 				fmt.Printf("%-5d | %-20s | %-40s | %-40s | %-5d\n", kandidatList[i].nomorUrut, kandidatList[i].nama, kandidatList[i].visi, kandidatList[i].misi, kandidatList[i].vote)
 			}
@@ -287,10 +288,10 @@ func tabel(kandidatList *tabKandidat, jumlahKandidat int) {
 	}
 }
 
-func insertionSortByVote(kandidatList *tabKandidat, n int) {
+func insertionSortByVote(kandidatList *tabKandidat, jumlahKandidat int) {
 	var i, j int
 	var key kandidat
-	for i = 1; i < n; i++ {
+	for i = 1; i < jumlahKandidat; i++ {
 		key = kandidatList[i]
 		j = i - 1
 		for j >= 0 && kandidatList[j].vote < key.vote {
@@ -301,12 +302,12 @@ func insertionSortByVote(kandidatList *tabKandidat, n int) {
 	}
 }
 
-func selectionSortByNomorUrut(kandidatList *tabKandidat, n int) {
+func selectionSortByNomorUrut(kandidatList *tabKandidat, jumlahKandidat int) {
 	var i, j, minIdx int
 	var temp kandidat
-	for i = 0; i < n; i++ {
+	for i = 0; i < jumlahKandidat; i++ {
 		minIdx = i
-		for j = i + 1; j < n; j++ {
+		for j = i + 1; j < jumlahKandidat; j++ {
 			if kandidatList[j].nomorUrut < kandidatList[minIdx].nomorUrut && kandidatList[j].nomorUrut != 0 {
 				minIdx = j
 			}
@@ -337,16 +338,16 @@ func binarySearch(kandidatList *tabKandidat, nomorUrut, jumlahKandidat int) int 
 	return -1
 }
 
-func tampilkanStatistik(kandidatList *tabKandidat, n int) {
+func tampilkanStatistik(kandidatList *tabKandidat, jumlahKandidat int) {
 	var totalVotes, i int
 	var persentase float64
-	for i = 0; i < n; i++ {
+	for i = 0; i < jumlahKandidat; i++ {
 		totalVotes = totalVotes + kandidatList[i].vote
 	}
 	fmt.Printf("Total Votes: %d\n", totalVotes)
 	if totalVotes > 0 {
 		fmt.Printf("Persentase Votes:\n")
-		for i = 0; i < n; i++ {
+		for i = 0; i < jumlahKandidat; i++ {
 			if kandidatList[i].nomorUrut != 0 {
 				persentase = float64(kandidatList[i].vote) / float64(totalVotes) * 100
 				fmt.Printf("- %s: %.2f%%\n", kandidatList[i].nama, persentase)
