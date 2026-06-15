@@ -1,9 +1,7 @@
 package main
-
 import "fmt"
 
 const NMAX int = 100
-
 type kandidat struct {
 	nomorUrut int
 	nama      string
@@ -36,6 +34,7 @@ func main() {
 
 	isiAnggota(&anggotaList, &jumlahAnggota)
 	for !programKeluar {
+		fmt.Println("\nSelamat datang di Sistem E-Voting!")
 		fmt.Print("Masukkan Nama : ")
 		fmt.Scan(&nama)
 
@@ -101,16 +100,6 @@ func cekLogin(anggotaList *tabAnggota, nama, password string, jumlahAnggota int)
 	return ""
 }
 
-func cariSlotKosong(kandidatList *tabKandidat) int {
-	var i int
-	for i = 0; i < NMAX; i++ {
-		if kandidatList[i].nomorUrut == 0 {
-			return i
-		}
-	}
-	return -1
-}
-
 func crud(kandidatList *tabKandidat, jumlahKandidat *int) {
 	var aksi int
 	fmt.Println("\nCRUD Data Kandidat")
@@ -133,20 +122,24 @@ func crud(kandidatList *tabKandidat, jumlahKandidat *int) {
 func tambah(kandidatList *tabKandidat, jumlahKandidat *int) {
 	var slot, i int
 	var isFound bool
+	var nomorUrut int
 
-	fmt.Println("Tambah Kandidat")
-	slot = cariSlotKosong(kandidatList)
-
+	fmt.Println("\nTambah Kandidat")
+	if *jumlahKandidat >= NMAX {
+		fmt.Println("Kapasitas kandidat penuh, tidak bisa menambah lagi.")
+		return
+	}
 	fmt.Print("Masukkan Nomor Urut : ")
-	fmt.Scan(&kandidatList[slot].nomorUrut)
+	fmt.Scan(&nomorUrut)
 
-	isFound = false
-	i = 0
-	for i < *jumlahKandidat && !isFound {
-		if kandidatList[i].nomorUrut == kandidatList[slot].nomorUrut {
+	if nomorUrut == 0 {
+		fmt.Println("Nomor urut tidak boleh 0.")
+		return
+	}
+	for i = 0; i < *jumlahKandidat; i++ {
+		if kandidatList[i].nomorUrut == nomorUrut && isFound == false {
 			isFound = true
 		}
-		i++
 	}
 
 	if isFound {
@@ -154,6 +147,12 @@ func tambah(kandidatList *tabKandidat, jumlahKandidat *int) {
 		return
 	}
 
+	slot = 0
+	for slot < NMAX && kandidatList[slot].nomorUrut != 0 {
+		slot++
+	}
+
+	kandidatList[slot].nomorUrut = nomorUrut
 	fmt.Print("Masukkan Nama : ")
 	fmt.Scan(&kandidatList[slot].nama)
 	fmt.Print("Masukkan Visi : ")
@@ -161,14 +160,15 @@ func tambah(kandidatList *tabKandidat, jumlahKandidat *int) {
 	fmt.Print("Masukkan Misi : ")
 	fmt.Scan(&kandidatList[slot].misi)
 	kandidatList[slot].vote = 0
-	*jumlahKandidat++
+	(*jumlahKandidat)++
 	fmt.Printf("Kandidat nomor urut %d berhasil ditambahkan!\n", kandidatList[slot].nomorUrut)
+	selectionSortByNomorUrut(kandidatList, *jumlahKandidat)
 	return
 }
 
 func update(kandidatList *tabKandidat, jumlahKandidat int) {
 	var nomor, i int
-	fmt.Println("Update Kandidat")
+	fmt.Println("\nUpdate Kandidat")
 	fmt.Print("Masukkan nomor urut kandidat yang ingin diupdate : ")
 	fmt.Scan(&nomor)
 	for i = 0; i < jumlahKandidat; i++ {
@@ -188,7 +188,7 @@ func update(kandidatList *tabKandidat, jumlahKandidat int) {
 
 func hapus(kandidatList *tabKandidat, jumlahKandidat *int) {
 	var nomorUrut, i int
-	fmt.Println("Hapus Kandidat")
+	fmt.Println("\nHapus Kandidat")
 	fmt.Print("Masukkan Nomor Urut Kandidat yang akan dihapus : ")
 	fmt.Scan(&nomorUrut)
 	for i = 0; i < *jumlahKandidat; i++ {
@@ -219,7 +219,7 @@ func seqSearch(kandidatList *tabKandidat, nomorUrut int, jumlahKandidat int) int
 
 func voting(kandidatList *tabKandidat, jumlahKandidat int) {
 	var nomorUrut, index, i int
-	fmt.Println("Voting")
+	fmt.Println("\nVoting")
 	fmt.Printf("%-5s | %-20s\n", "Nomor", "Nama")
 	for i = 0; i < jumlahKandidat; i++ {
 		if kandidatList[i].nomorUrut != 0 {
@@ -239,14 +239,14 @@ func voting(kandidatList *tabKandidat, jumlahKandidat int) {
 
 func tabel(kandidatList *tabKandidat, jumlahKandidat int) {
 	var i, aksi, nomorUrut, index int
-	fmt.Println("Tabel Kandidat")
+	fmt.Println("\nTabel Kandidat")
 	fmt.Printf("%-5s | %-20s | %-40s | %-40s | %-5s\n", "Nomor", "Nama", "Visi", "Misi", "Jumlah Vote")
 	for i = 0; i < jumlahKandidat; i++ {
 		if kandidatList[i].nomorUrut != 0 {
 			fmt.Printf("%-5d | %-20s | %-40s | %-40s | %-5d\n", kandidatList[i].nomorUrut, kandidatList[i].nama, kandidatList[i].visi, kandidatList[i].misi, kandidatList[i].vote)
 		}
 	}
-	fmt.Println("Pilih aksi yang ingin dilakukan")
+	fmt.Println("\nPilih aksi yang ingin dilakukan")
 	fmt.Println("1 Urutkan berdasarkan jumlah vote\n2 Urutkan berdasarkan nomor urut\n3 Cari kandidat berdasarkan nomor urut\n4 Tampilkan Statistik\n5 Kembali")
 	fmt.Print("Masukkan Aksi : ")
 	fmt.Scan(&aksi)
@@ -341,6 +341,7 @@ func binarySearch(kandidatList *tabKandidat, nomorUrut, jumlahKandidat int) int 
 func tampilkanStatistik(kandidatList *tabKandidat, jumlahKandidat int) {
 	var totalVotes, i int
 	var persentase float64
+	fmt.Println("\nStatistik Voting")
 	for i = 0; i < jumlahKandidat; i++ {
 		totalVotes = totalVotes + kandidatList[i].vote
 	}
