@@ -32,6 +32,8 @@ func main() {
 	var anggotaList tabAnggota
 	var programKeluar, menuKeluar bool = false, false
 
+	programKeluar = false
+	menuKeluar = false
 	isiAnggota(&anggotaList, &jumlahAnggota)
 	for !programKeluar {
 		fmt.Println("\nSelamat datang di Sistem E-Voting!")
@@ -187,17 +189,18 @@ func update(kandidatList *tabKandidat, jumlahKandidat int) {
 }
 
 func hapus(kandidatList *tabKandidat, jumlahKandidat *int) {
-	var nomorUrut, i int
+	var nomorUrut, i, j int
 	fmt.Println("\nHapus Kandidat")
 	fmt.Print("Masukkan Nomor Urut Kandidat yang akan dihapus : ")
 	fmt.Scan(&nomorUrut)
 	for i = 0; i < *jumlahKandidat; i++ {
 		if kandidatList[i].nomorUrut == nomorUrut {
-			kandidatList[i].nomorUrut = 0
-			kandidatList[i].nama = ""
-			kandidatList[i].visi = ""
-			kandidatList[i].misi = ""
-			kandidatList[i].vote = 0
+			for j = i; j < *jumlahKandidat - 1; j++ {
+				kandidatList[j] = kandidatList[j+1]
+			}
+
+			(*kandidatList)[*jumlahKandidat-1] = kandidat{}
+			
 			*jumlahKandidat--
 			fmt.Printf("Kandidat nomor urut %d berhasil dihapus!\n", nomorUrut)
 			return
@@ -242,7 +245,7 @@ func tabel(kandidatList *tabKandidat, jumlahKandidat int) {
 	fmt.Println("\nTabel Kandidat")
 	fmt.Printf("%-5s | %-20s | %-40s | %-40s | %-5s\n", "Nomor", "Nama", "Visi", "Misi", "Jumlah Vote")
 	for i = 0; i < jumlahKandidat; i++ {
-		if kandidatList[i].nomorUrut != 0 {
+		if kandidatList[i].nomorUrut != -1 {
 			fmt.Printf("%-5d | %-20s | %-40s | %-40s | %-5d\n", kandidatList[i].nomorUrut, kandidatList[i].nama, kandidatList[i].visi, kandidatList[i].misi, kandidatList[i].vote)
 		}
 	}
