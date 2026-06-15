@@ -193,24 +193,21 @@ func update(kandidatList *tabKandidat, jumlahKandidat int) {
 }
 
 func hapus(kandidatList *tabKandidat, jumlahKandidat *int) {
-	var nomorUrut, i, j int
-	fmt.Println("\nHapus Kandidat")
-	fmt.Print("Masukkan Nomor Urut Kandidat yang akan dihapus : ")
-	fmt.Scan(&nomorUrut)
-	for i = 0; i < *jumlahKandidat; i++ {
-		if kandidatList[i].nomorUrut == nomorUrut {
-			for j = i; j < *jumlahKandidat-1; j++ {
-				kandidatList[j] = kandidatList[j+1]
-			}
+    var nomorUrut, j, index int
+    fmt.Println("\nHapus Kandidat")
+    fmt.Print("Masukkan Nomor Urut Kandidat yang akan dihapus : ")
+    fmt.Scan(&nomorUrut)
 
-			(*kandidatList)[*jumlahKandidat-1] = kandidat{}
-
-			*jumlahKandidat--
-			fmt.Printf("Kandidat nomor urut %d berhasil dihapus!\n", nomorUrut)
-			return
-		}
-	}
-	fmt.Println("Kandidat tidak ditemukan!")
+    index = seqSearch(kandidatList, nomorUrut, *jumlahKandidat)
+    if index != -1 {
+        for j = index; j < *jumlahKandidat-1; j++ {
+            kandidatList[j] = kandidatList[j+1]
+        }
+        *jumlahKandidat--
+        fmt.Printf("Kandidat nomor urut %d berhasil dihapus!\n", nomorUrut)
+        return
+    }
+    fmt.Println("Kandidat tidak ditemukan!")
 }
 
 func seqSearch(kandidatList *tabKandidat, nomorUrut int, jumlahKandidat int) int {
